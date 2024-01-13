@@ -1,6 +1,5 @@
-﻿using BookShop.API.Contracts.V1;
-using BookShop.API.Data;
-using BookShop.API.Entities;
+﻿using BookShop.API.Entities;
+using BookShop.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookShop.API.Controllers.V1
@@ -11,7 +10,7 @@ namespace BookShop.API.Controllers.V1
 
         public BooksController(BookShopDbContext bookShopDbContext)
         {
-            _bookShopDbContext=bookShopDbContext;
+            _bookShopDbContext = bookShopDbContext;
         }
 
         [HttpGet]
