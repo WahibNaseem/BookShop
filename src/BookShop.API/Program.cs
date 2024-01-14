@@ -1,4 +1,5 @@
 
+using BookShop.API.Configuration;
 using BookShop.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<BookShopDbContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("BookShopConnection")));
-
+builder.Services.ResolveDependencies();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
