@@ -9,7 +9,11 @@ namespace BookShop.Infrastructure.Repositories
     {
         public BookRepository(BookShopDbContext context) : base(context) { }
 
-        public async Task<List<Book>> GetAll()
+        /// <summary>
+        /// while communicate with database it gets all the available book 
+        /// </summary>
+        /// <returns>return the books from the database</returns>
+        public override async Task<IEnumerable<Book>> GetAllAsync()
         {
             return await BookShopDb.Books.AsNoTracking()
                              .Include(b => b.Category)
@@ -17,7 +21,13 @@ namespace BookShop.Infrastructure.Repositories
                              .ToListAsync();
         }
 
-        public async Task<Book> GetById(int id)
+        /// <summary>
+        ///  it communicate with database to get a single book through the id of that book
+        ///  and it's respective property through Eager Loading
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public override async Task<Book> GetByIdAsync(int id)
         {
             return await BookShopDb.Books.AsNoTracking()
                              .Include(b => b.Category)
@@ -25,19 +35,30 @@ namespace BookShop.Infrastructure.Repositories
                              .FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<Book>> GetBooksByCategory(int categoryId)
+        /// <summary>
+        /// it communicate with database to search the book through its name
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <returns>from database It will return the books</returns>
+        public async Task<IEnumerable<Book>> GetBooksByCategoryAsync(int categoryId)
         {
-            return await Search(b => b.CategoryId == categoryId);
+            return await SearchAsync(b => b.CategoryId == categoryId);
         }
 
-        public async Task<IEnumerable<Book>> SearchBookWithCategory(string searchedValue)
+        /// <summary>
+        /// it communicate with database to search the book with its  name , author, category
+        /// and return it respective property through eager loading
+        /// </summary>
+        /// <param name="searchKey"></param>
+        /// <returns>from the database It will return  books available whatever search key we pass</returns>
+        public async Task<IEnumerable<Book>> SearchBookWithCategoryAsync(string searchKey)
         {
             return await BookShopDb.Books.AsNoTracking()
                              .Include(b => b.Category)
-                             .Where(b => b.Name.Contains(searchedValue) ||
-                                     b.Author.Contains(searchedValue) ||
-                                     b.Description.Contains(searchedValue) ||
-                                     b.Category.Name.Contains(searchedValue))
+                             .Where(b => b.Name.Contains(searchKey) ||
+                                     b.Author.Contains(searchKey) ||
+                                     b.Description.Contains(searchKey) ||
+                                     b.Category.Name.Contains(searchKey))
                              .ToListAsync();
         }
     }

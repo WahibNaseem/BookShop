@@ -10,6 +10,7 @@ namespace BookShop.Domain.Services
     public class CategoryService : ICategoryService
     {
         private readonly ICategoryRepository _categoryRepository;
+
         private readonly IBookService _bookService;
 
         public CategoryService(ICategoryRepository categoryRepository, IBookService bookService)
@@ -30,7 +31,7 @@ namespace BookShop.Domain.Services
 
         public async Task<Category> AddAsync(Category category)
         {
-            if (_categoryRepository.Search(c => c.Name == category.Name).Result.Any())
+            if (_categoryRepository.SearchAsync(c => c.Name == category.Name).Result.Any())
                 return null;
 
             await _categoryRepository.AddAsync(category);
@@ -39,7 +40,7 @@ namespace BookShop.Domain.Services
 
         public async Task<Category> UpdateAsync(Category category)
         {
-            if (_categoryRepository.Search(c => c.Name == category.Name && c.Id != category.Id).Result.Any())
+            if (_categoryRepository.SearchAsync(c => c.Name == category.Name && c.Id != category.Id).Result.Any())
                 return null;
 
             await _categoryRepository.UpdateAsync(category);
@@ -48,7 +49,7 @@ namespace BookShop.Domain.Services
 
         public async Task<bool> RemoveAsync(Category category)
         {
-            var books = await _bookService.GetBooksByCategory(category.Id);
+            var books = await _bookService.GetBooksByCategoryAsync(category.Id);
             if (books.Any()) return false;
 
             await _categoryRepository.RemoveAsync(category);
@@ -57,7 +58,7 @@ namespace BookShop.Domain.Services
 
         public async Task<IEnumerable<Category>> SearchAsync(string categoryName)
         {
-            return await _categoryRepository.Search(c => c.Name.Contains(categoryName));
+            return await _categoryRepository.SearchAsync(c => c.Name.Contains(categoryName));
         }
 
         public void Dispose()

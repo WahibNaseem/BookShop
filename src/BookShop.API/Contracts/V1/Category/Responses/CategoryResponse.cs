@@ -1,6 +1,6 @@
-namespace BookShop.API.Dtos.Category
+namespace BookShop.API.Contracts.V1.Category.Responses
 {
-    public class CategoryResultDto
+    public class CategoryResponse
     {
         public int Id { get; set; }
 

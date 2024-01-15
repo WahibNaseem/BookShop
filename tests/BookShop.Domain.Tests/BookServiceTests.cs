@@ -17,16 +17,15 @@ namespace BookShop.Domain.Tests
             _bookRepositoryMock = new Mock<IBookRepository>();
             _bookService = new BookService(_bookRepositoryMock.Object);
         }
-
         [Fact]
         public async void GetAll_ShouldReturnAListOfBook_WhenBooksExist()
         {
             var books = CreateBookList();
 
-            _bookRepositoryMock.Setup(x => x.GetAll())
+            _bookRepositoryMock.Setup(x => x.GetAllAsync())
                                                        .ReturnsAsync(books);
 
-            var result = await _bookService.GetAll();
+            var result = await _bookService.GetAllAsync();
 
             Assert.NotNull(result);
             Assert.IsType<List<Book>>(result);
@@ -35,10 +34,10 @@ namespace BookShop.Domain.Tests
         [Fact]
         public async void GetAll_ShouldReturnNull_WhenBookDoNotExist()
         {
-            _bookRepositoryMock.Setup(x => x.GetAll())
+            _bookRepositoryMock.Setup(x => x.GetAllAsync())
                                                          .ReturnsAsync((List<Book>) null);
 
-            var result = await _bookService.GetAll();
+            var result = await _bookService.GetAllAsync();
 
             Assert.Null(result);
         }
@@ -46,12 +45,12 @@ namespace BookShop.Domain.Tests
         [Fact]
         public async void GetAll_ShouldCallGetAllFromRepository_OnlyOnce()
         {
-            _bookRepositoryMock.Setup(x => x.GetAll())
+            _bookRepositoryMock.Setup(x => x.GetAllAsync())
                                                         .ReturnsAsync(new List<Book>());
 
-            await _bookService.GetAll();
+            await _bookService.GetAllAsync();
 
-            _bookRepositoryMock.Verify(x => x.GetAll(), Times.Once);
+            _bookRepositoryMock.Verify(x => x.GetAllAsync(), Times.Once);
         }
 
         [Fact]
@@ -59,10 +58,10 @@ namespace BookShop.Domain.Tests
         {
             var book = CreateBook();
 
-            _bookRepositoryMock.Setup(x => x.GetById(book.Id))
+            _bookRepositoryMock.Setup(x => x.GetByIdAsync(book.Id))
                                                         .ReturnsAsync(book);
 
-            var result = await _bookService.GetById(book.Id);
+            var result = await _bookService.GetByIdAsync(book.Id);
 
             Assert.NotNull(result);
             Assert.IsType<Book>(result);
@@ -71,10 +70,10 @@ namespace BookShop.Domain.Tests
         [Fact]
         public async void GetById_ShouldReturnNull_WhenBookDoesNotExist()
         {
-            _bookRepositoryMock.Setup(x => x.GetById(1))
+            _bookRepositoryMock.Setup(x => x.GetByIdAsync(1))
                                                         .ReturnsAsync((Book) null);
 
-            var result = await _bookService.GetById(1);
+            var result = await _bookService.GetByIdAsync(1);
 
             Assert.Null(result);
         }
@@ -82,12 +81,12 @@ namespace BookShop.Domain.Tests
         [Fact]
         public async void GetById_ShouldCallByRepository_OnlyOnce()
         {
-            _bookRepositoryMock.Setup(x => x.GetById(1))
+            _bookRepositoryMock.Setup(x => x.GetByIdAsync(1))
                                                        .ReturnsAsync(new Book());
 
-            await _bookService.GetById(1);
+            await _bookService.GetByIdAsync(1);
 
-            _bookRepositoryMock.Verify(x => x.GetById(1), Times.Once);
+            _bookRepositoryMock.Verify(x => x.GetByIdAsync(1), Times.Once);
         }
 
         [Fact]
@@ -96,12 +95,12 @@ namespace BookShop.Domain.Tests
             var book = CreateBook();
 
             _bookRepositoryMock.Setup(x =>
-                               x.Search(b => b.Name == book.Name))
+                               x.SearchAsync(b => b.Name == book.Name))
                                   .ReturnsAsync(new List<Book>());
 
             _bookRepositoryMock.Setup(x => x.AddAsync(book));
 
-            var result = await _bookService.Add(book);
+            var result = await _bookService.AddAsync(book);
 
             Assert.NotNull(result);
             Assert.IsType<Book>(result);
@@ -112,13 +111,13 @@ namespace BookShop.Domain.Tests
         public async void Add_ShouldNotAddBook_WhenBookNameAlreadyExist()
         {
             var book = CreateBook();
-            var bookList = new List<Book>() { book };
+            var books = new List<Book>() { book };
 
             _bookRepositoryMock.Setup(x =>
-                              x.Search(b => b.Name == book.Name))
-                                   .ReturnsAsync(bookList);
+                              x.SearchAsync(b => b.Name == book.Name))
+                                   .ReturnsAsync(books);
 
-            var result = await _bookService.Add(book);
+            var result = await _bookService.AddAsync(book);
 
             Assert.Null(result);
         }
@@ -129,12 +128,12 @@ namespace BookShop.Domain.Tests
             var book = CreateBook();
 
             _bookRepositoryMock.Setup(x =>
-                                x.Search(x => x.Name == book.Name && x.Id != book.Id))
+                                x.SearchAsync(x => x.Name == book.Name && x.Id != book.Id))
                                 .ReturnsAsync(new List<Book>());
 
             _bookRepositoryMock.Setup(x => x.UpdateAsync(book));
 
-            var result = await _bookService.Update(book);
+            var result = await _bookService.UpdateAsync(book);
 
             Assert.NotNull(result);
             Assert.IsType<Book>(result);
@@ -144,13 +143,13 @@ namespace BookShop.Domain.Tests
         public async void Update_ShouldNotUpdateBook_WhenBookDoesNotExist()
         {
             var book = CreateBook();
-            var bookList = new List<Book>() { book };
+            var books = new List<Book>() { book };
 
             _bookRepositoryMock.Setup(x =>
-                                x.Search(b => b.Name == book.Name && b.Id != book.Id))
-                                .ReturnsAsync(bookList);
+                                x.SearchAsync(b => b.Name == book.Name && b.Id != book.Id))
+                                .ReturnsAsync(books);
 
-            var result = await _bookService.Update(book);
+            var result = await _bookService.UpdateAsync(book);
 
             Assert.Null(result);
         }
@@ -160,7 +159,7 @@ namespace BookShop.Domain.Tests
         {
             var book = CreateBook();
 
-            var result = await _bookService.Remove(book);
+            var result = await _bookService.RemoveAsync(book);
 
             Assert.True(result);
         }
@@ -170,10 +169,10 @@ namespace BookShop.Domain.Tests
         {
             var books = CreateBookList();
 
-            _bookRepositoryMock.Setup(x => x.GetBooksByCategory(2))
+            _bookRepositoryMock.Setup(x => x.GetBooksByCategoryAsync(2))
                                                         .ReturnsAsync(books);
 
-            var result = await _bookService.GetBooksByCategory(2);
+            var result = await _bookService.GetBooksByCategoryAsync(2);
 
             Assert.NotNull(result);
             Assert.IsType<List<Book>>(result);
@@ -182,10 +181,10 @@ namespace BookShop.Domain.Tests
         [Fact]
         public async void GetBooksByCategory_ShouldReturnListOfBook_WhenBooksWithSearchCategoryDoNotExist()
         {
-            _bookRepositoryMock.Setup(x => x.GetBooksByCategory(2))
+            _bookRepositoryMock.Setup(x => x.GetBooksByCategoryAsync(2))
                                                            .ReturnsAsync((IEnumerable<Book>) null);
 
-            var result = await _bookService.GetBooksByCategory(2);
+            var result = await _bookService.GetBooksByCategoryAsync(2);
 
             Assert.Null(result);
         }

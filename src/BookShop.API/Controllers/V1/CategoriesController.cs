@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
-using BookShop.API.Dtos.Category;
+using BookShop.API.Contracts.V1.Category.Requests;
+using BookShop.API.Contracts.V1.Category.Responses;
 using BookShop.Domain.Entities;
 using BookShop.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookShop.API.Controllers
+namespace BookShop.API.Controllers.V1
 {
     public class CategoriesController : MainController
     {
@@ -24,7 +25,7 @@ namespace BookShop.API.Controllers
         {
             var categories = await _categoryService.GetAllAsync();
 
-            return Ok(_mapper.Map<IEnumerable<CategoryResultDto>>(categories));
+            return Ok(_mapper.Map<IEnumerable<CategoryResponse>>(categories));
         }
 
         [HttpGet("{id:int}")]
@@ -36,13 +37,13 @@ namespace BookShop.API.Controllers
 
             if (category == null) return NotFound();
 
-            return Ok(_mapper.Map<CategoryResultDto>(category));
+            return Ok(_mapper.Map<CategoryResponse>(category));
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Add(CategoryAddDto categoryDto)
+        public async Task<IActionResult> Add(CreateCategoryRequest categoryDto)
         {
             if (!ModelState.IsValid) return BadRequest();
 
@@ -51,13 +52,13 @@ namespace BookShop.API.Controllers
 
             if (categoryResult == null) return BadRequest();
 
-            return Ok(_mapper.Map<CategoryResultDto>(categoryResult));
+            return Ok(_mapper.Map<CategoryResponse>(categoryResult));
         }
 
         [HttpPut("{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Update(int id, CategoryEditDto categoryDto)
+        public async Task<IActionResult> Update(int id, UpdateCategoryRequest categoryDto)
         {
             if (id != categoryDto.Id) return BadRequest();
 

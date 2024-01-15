@@ -1,9 +1,16 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace BookShop.API.Dtos.Book
+namespace BookShop.API.Contracts.V1.Book.Requests
 {
-    public class BookAddDto
+    public class UpdateBookRequest
     {
+        [Key]
+        public int Id { get; set; }
+
         [Required(ErrorMessage = "The field {0} is required")]
         public int CategoryId { get; set; }
 
@@ -18,5 +25,6 @@ namespace BookShop.API.Dtos.Book
         public string Description { get; set; }
 
         public DateTime PublishDate { get; set; }
+
     }
 }

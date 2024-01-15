@@ -23,7 +23,7 @@ namespace BookShop.Domain.Tests
         [Fact]
         public async void GetAll_ShouldReturnAListOfCategories_WhenCategoriesExist()
         {
-            var categories = CreateCategoryList();
+            var categories = CreateCategories();
 
             _categoryRepositoryMock.Setup(x =>
                 x.GetAllAsync()).ReturnsAsync(categories);
@@ -76,7 +76,7 @@ namespace BookShop.Domain.Tests
             var category = CreateCategory();
 
             _categoryRepositoryMock.Setup(x =>
-                x.Search(c => c.Name == category.Name))
+                x.SearchAsync(c => c.Name == category.Name))
                 .ReturnsAsync(new List<Category>());
             _categoryRepositoryMock.Setup(x => x.AddAsync(category));
 
@@ -90,10 +90,10 @@ namespace BookShop.Domain.Tests
         public async void Add_ShouldNotAddCategory_WhenCategoryNameAlreadyExist()
         {
             var category = CreateCategory();
-            var categoryList = new List<Category>() { category };
+            var categories = new List<Category>() { category };
 
             _categoryRepositoryMock.Setup(x =>
-                x.Search(c => c.Name == category.Name)).ReturnsAsync(categoryList);
+                x.SearchAsync(c => c.Name == category.Name)).ReturnsAsync(categories);
 
             var result = await _categoryService.AddAsync(category);
 
@@ -106,7 +106,7 @@ namespace BookShop.Domain.Tests
             var category = CreateCategory();
 
             _categoryRepositoryMock.Setup(x =>
-                x.Search(c => c.Name == category.Name && c.Id != category.Id))
+                x.SearchAsync(c => c.Name == category.Name && c.Id != category.Id))
                 .ReturnsAsync(new List<Category>());
             _categoryRepositoryMock.Setup(c => c.UpdateAsync(category));
 
@@ -120,11 +120,11 @@ namespace BookShop.Domain.Tests
         public async void Update_ShouldNotUpdateCategory_WhenCategoryDoesNotExist()
         {
             var category = CreateCategory();
-            var categoryList = new List<Category>() { category };
+            var categories = new List<Category>() { category };
 
             _categoryRepositoryMock.Setup(x =>
-                    x.Search(x => x.Name == category.Name && x.Id != category.Id))
-                .ReturnsAsync(categoryList);
+                    x.SearchAsync(x => x.Name == category.Name && x.Id != category.Id))
+                .ReturnsAsync(categories);
 
             var result = await _categoryService.UpdateAsync(category);
 
@@ -137,7 +137,7 @@ namespace BookShop.Domain.Tests
             var category = CreateCategory();
 
             _bookService.Setup(x =>
-                x.GetBooksByCategory(category.Id)).ReturnsAsync(new List<Book>());
+                x.GetBooksByCategoryAsync(category.Id)).ReturnsAsync(new List<Book>());
 
             var result = await _categoryService.RemoveAsync(category);
 
@@ -147,13 +147,13 @@ namespace BookShop.Domain.Tests
         [Fact]
         public async void Search_ShouldReturnAListOfCategory_WhenCategoriesWithSearchedNameExist()
         {
-            var categoryList = CreateCategoryList();
+            var categories = CreateCategories();
             var searchedCategory = CreateCategory();
             var categoryName = searchedCategory.Name;
 
             _categoryRepositoryMock.Setup(x =>
-                x.Search(x => x.Name.Contains(categoryName)))
-                .ReturnsAsync(categoryList);
+                x.SearchAsync(x => x.Name.Contains(categoryName)))
+                .ReturnsAsync(categories);
 
             var result = await _categoryService.SearchAsync(searchedCategory.Name);
 
@@ -168,7 +168,7 @@ namespace BookShop.Domain.Tests
             var categoryName = searchedCategory.Name;
 
             _categoryRepositoryMock.Setup(x =>
-                x.Search(x => x.Name.Contains(categoryName)))
+                x.SearchAsync(x => x.Name.Contains(categoryName)))
                 .ReturnsAsync((IEnumerable<Category>) (null));
 
             var result = await _categoryService.SearchAsync(searchedCategory.Name);
@@ -185,7 +185,7 @@ namespace BookShop.Domain.Tests
             };
         }
 
-        private List<Category> CreateCategoryList()
+        private List<Category> CreateCategories()
         {
             return new List<Category>()
             {
